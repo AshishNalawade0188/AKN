@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Harshada — Will you be mine forever?</title>
+  <style>
+    /* === Colors & Base === */
+    :root{
+      --bg1:#0b0a13;
+      --bg2:#2a0b1e;
+      --pink:#ff6f9a;
+      --rose:#ff3d6b;
+      --gold:#ffd36b;
+      --card:rgba(255,255,255,0.04);
+      --glass:rgba(255,255,255,0.06);
+      --muted:rgba(255,255,255,0.75);
+      --white:#fff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family: Inter, Poppins, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:var(--white); -webkit-font-smoothing:antialiased;}
+    body{
+      background: radial-gradient(800px 400px at 10% 20%, rgba(255,45,117,0.06), transparent 12%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      display:flex; align-items:center; justify-content:center; padding:28px;
+      overflow:hidden;
+    }
+
+    /* === cinematic lights === */
+    .light{
+      position:fixed; width:260px; height:260px; border-radius:50%;
+      filter:blur(80px); opacity:0.9; pointer-events:none; z-index:0;
+      mix-blend-mode:screen;
+    }
+    .light.l1{background: radial-gradient(circle, rgba(255,109,150,0.15), transparent 50%); top:10%; left:6%;}
+    .light.l2{background: radial-gradient(circle, rgba(255,211,105,0.12), transparent 50%); bottom:8%; right:6%;}
+
+    /* === container card === */
+    .card{
+      position:relative; z-index:3; width:min(980px,96vw); max-width:980px; border-radius:20px;
+      padding:28px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 12px 40px rgba(2,6,23,0.7), 0 0 60px rgba(255,45,117,0.06);
+      border:1px solid rgba(255,255,255,0.04);
+      display:grid; grid-template-columns: 1fr 340px; gap:22px; align-items:center;
+      overflow:hidden;
+    }
+
+    /* left cinematic scene */
+    .scene{padding:8px 18px}
+    h1{font-size:44px; margin:0 0 6px; color:var(--gold); text-shadow:0 6px 18px rgba(255,45,117,0.12);}
+    .lead{color:var(--muted); margin:0 0 18px; font-size:16px}
+    .typewriter{font-size:18px; line-height:1.5; min-height:86px; margin-bottom:18px}
+    .controls{display:flex; gap:12px; flex-wrap:wrap}
+    .btn{
+      background:linear-gradient(90deg,var(--pink),var(--rose)); color:white; border:0; padding:12px 18px;
+      border-radius:12px; font-weight:700; cursor:pointer; box-shadow:0 8px 26px rgba(255,77,110,0.12);
+      transform:translateZ(0);
+    }
+    .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--white); font-weight:600}
+    .hint{font-size:13px; color:var(--muted); margin-top:10px}
+
+    /* right: details / avatar */
+    .side{
+      padding:18px; border-radius:14px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center;
+    }
+    .avatar{
+      width:120px; height:120px; border-radius:18px; background:linear-gradient(180deg,#ff9db8,#ffd8e8);
+      display:flex; align-items:center; justify-content:center; font-weight:800; font-size:40px; color:#6b0830;
+      box-shadow:0 10px 30px rgba(255,45,117,0.12);
+    }
+    .side h3{margin:6px 0 0; font-size:20px}
+    .side p{margin:2px 0 0; color:var(--muted); font-size:14px; text-align:center}
+
+    /* floating/emojis stage (absolute) */
+    .emoji-stage{position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+    .emoji{
+      position:absolute; font-size:28px; will-change:transform,opacity; opacity:0; transform:translateY(0) scale(1);
+    }
+
+    /* modal (proposal) */
+    .modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:60;}
+    .backdrop{position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,3,16,0.7), rgba(7,6,10,0.85)); backdrop-filter:blur(6px);}
+    .proposal{
+      position:relative; z-index:2; width:min(720px,94%); border-radius:16px; padding:22px;
+      background:linear-gradient(180deg,#1a0b1a,#0d0710); border:2px solid rgba(255,109,150,0.12);
+      box-shadow:0 30px 80px rgba(2,6,20,0.8); color:var(--muted); animation:pop .45s ease;
+    }
+    @keyframes pop{from{transform:scale(.85);opacity:0} to{transform:scale(1);opacity:1}}
+    .proposal h2{margin:0 0 8px; color:var(--gold); font-size:30px}
+    .proposal p{white-space:pre-wrap; font-size:18px; line-height:1.5}
+    .proposal .row{display:flex; gap:12px; justify-content:center; margin-top:16px}
+    .close-btn{position:absolute; top:12px; right:12px; background:transparent; border:0; color:var(--muted); font-size:20px; cursor:pointer}
+
+    /* celebratory hearts after Yes */
+    .celebrate{position:fixed; inset:0; pointer-events:none; z-index:70; overflow:hidden}
+
+    /* typewriter cursor */
+    .cursor{display:inline-block; width:2px; background:var(--white); margin-left:4px; animation: blink 900ms steps(2,start) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* responsive */
+    @media (max-width:880px){
+      .card{grid-template-columns:1fr; padding:18px}
+      .side{order:-1}
+      h1{font-size:30px}
+    }
+  </style>
+</head>
+<body>
+  <!-- cinematic lights -->
+  <div class="light l1"></div>
+  <div class="light l2"></div>
+
+  <div class="card" role="main" aria-label="Proposal card">
+    <div class="scene">
+      <h1>Harshada, will you be mine forever?</h1>
+      <p class="lead">A little scene, a little magic — straight from my heart to yours. Click the reveal when you're ready.</p>
+
+      <div class="typewriter" id="typewriter" aria-live="polite"></div>
+
+      <div style="height:8px"></div>
+
+      <div class="controls">
+        <button class="btn" id="revealBtn" aria-haspopup="dialog">✨ Click to Reveal My Proposal</button>
+        <button class="btn ghost" id="musicBtn">🎵 Play Music</button>
+      </div>
+
+      <p class="hint">Tip: You can add a romantic MP3 by editing the file and setting the music URL in the script.</p>
+    </div>
+
+    <div class="side" aria-hidden="false">
+      <div class="avatar" id="avatar">H</div>
+      <h3>For: Harshada</h3>
+      <p>Made with love, a dash of Bollywood drama, and a heart full of promises.</p>
+    </div>
+
+    <!-- floating emojis background -->
+    <div class="emoji-stage" id="emojiStage" aria-hidden="true"></div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Proposal dialog">
+    <div class="backdrop"></div>
+    <div class="proposal" role="document">
+      <button class="close-btn" id="closeModal" aria-label="Close">✕</button>
+      <h2>From the heart — Dil Se</h2>
+      <p id="proposalText"></p>
+      <div class="row">
+        <button class="btn" id="yesBtn">Yes ❤️</button>
+        <button class="btn ghost" id="maybeBtn">Maybe 🌸</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- celebration container -->
+  <div class="celebrate" id="celebrate"></div>
+
+  <!-- audio -->
+  <audio id="bgMusic" loop></audio>
+
+  <script>
+    /* ========== Personalize ========== */
+    const girlfriendName = 'Harshada';           // change if needed
+    const typeMessages = [
+      `You make ordinary moments feel like a song.`,
+      `Every laugh, every look — I keep them like precious scenes.`,
+      `I dream of a life where every chapter has you in the lead.`,
+      `So… Harshada, will you be mine forever?`
+    ];
+
+    /* ========== Typewriter (cycling) ========== */
+    const tpEl = document.getElementById('typewriter');
+    let tIndex = 0, cIndex = 0, forward = true;
+    function typeTick(){
+      const full = typeMessages[tIndex];
+      if(forward){
+        cIndex++;
+        tpEl.textContent = full.slice(0, cIndex);
+        tpEl.insertAdjacentHTML('beforeend', '<span class="cursor"></span>');
+        if(cIndex >= full.length){ forward=false; setTimeout(typeTick, 1200); return; }
+      } else {
+        cIndex--;
+        tpEl.textContent = full.slice(0, cIndex);
+        tpEl.insertAdjacentHTML('beforeend', '<span class="cursor"></span>');
+        if(cIndex <= 0){ forward=true; tIndex=(tIndex+1)%typeMessages.length; setTimeout(typeTick, 350); return; }
+      }
+      setTimeout(typeTick, 60);
+    }
+    typeTick();
+
+    /* ========== Floating emojis (hearts, roses, reels) ========== */
+    const emojiStage = document.getElementById('emojiStage');
+    const EMOJIS = ['❤️','🌹','🎥','💃','✨','🎶'];
+    function spawnEmoji(opts={}){
+      const e = document.createElement('div');
+      e.className = 'emoji';
+      e.textContent = opts.char || EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+      const size = (14 + Math.random()*34) | 0;
+      e.style.fontSize = size + 'px';
+      const left = Math.random()*100;
+      e.style.left = left + '%';
+      const delay = Math.random()*800;
+      e.style.opacity = 0;
+      emojiStage.appendChild(e);
+
+      // animate using Web Animations for smoothness
+      const travel = 600 + Math.random()*420;
+      const rotate = (Math.random()<0.5? -1: 1) * (20 + Math.random()*120);
+      const anim = e.animate([
+        { transform: `translateY(0px) rotate(0deg) scale(0.9)`, opacity:0 },
+        { transform: `translateY(-${travel}px) rotate(${rotate}deg) scale(1)`, opacity:1 },
+        { transform: `translateY(-${travel + 140}px) rotate(${rotate*1.4}deg) scale(0.95)`, opacity:0 }
+      ], { duration: 3800 + Math.random()*4200, easing:'ease-out', delay });
+      anim.onfinish = ()=> e.remove();
+    }
+    // periodic spawn for soft dreamy effect
+    const emojiInterval = setInterval(()=> spawnEmoji(), 650);
+
+    /* ========== Reveal modal logic ========== */
+    const revealBtn = document.getElementById('revealBtn');
+    const modal = document.getElementById('modal');
+    const closeModal = document.getElementById('closeModal');
+    const proposalText = document.getElementById('proposalText');
+    revealBtn.addEventListener('click', openProposal);
+    closeModal.addEventListener('click', ()=> modal.style.display = 'none');
+
+    function openProposal(){
+      proposalText.textContent = `${girlfriendName},\n\nFrom the first smile to the quiet moments — you make my life a beautiful film. I want to write the rest of this story with you by my side. Will you be my partner in every scene, every song, forever?`;
+      modal.style.display = 'flex';
+      // bring a few emojis to the modal entrance
+      for(let i=0;i<8;i++){ setTimeout(()=> spawnEmoji({char: EMOJIS[i%EMOJIS.length]}), i*120); }
+    }
+
+    /* ========== Yes / Maybe responses ========== */
+    const yesBtn = document.getElementById('yesBtn');
+    const maybeBtn = document.getElementById('maybeBtn');
+    const celebrateEl = document.getElementById('celebrate');
+
+    yesBtn.addEventListener('click', ()=> {
+      proposalText.textContent = `You said YES! 🎉\n\n${girlfriendName}, you made me the luckiest person alive. Let's celebrate this beautiful beginning.`;
+      // create celebration hearts/confetti
+      launchCelebration(36);
+      // optionally, auto-play music if available
+      tryPlayMusic();
+      // disable yes button to avoid repeated clicks
+      yesBtn.disabled = true;
+      yesBtn.style.opacity = 0.9;
+    });
+
+    maybeBtn.addEventListener('click', ()=> {
+      proposalText.textContent = `No pressure — I cherish every moment with you. When you're ready, I'll be here. 🌸`;
+      // soft rose fall
+      for(let i=0;i<12;i++){ setTimeout(()=> spawnEmoji({char:'🌹'}), i*180); }
+    });
+
+    /* ========== celebration launcher ========= */
+    function launchCelebration(count=24){
+      for(let i=0;i<count;i++){
+        setTimeout(()=> {
+          const c = document.createElement('div');
+          c.style.position='absolute';
+          c.style.left = (10 + Math.random()*80) + '%';
+          c.style.top = (80 + Math.random()*10) + '%';
+          c.style.fontSize = (18 + Math.random()*40) + 'px';
+          c.style.pointerEvents = 'none';
+          c.style.userSelect = 'none';
+          c.textContent = Math.random()<0.6? '❤️' : '✨';
+          celebrateEl.appendChild(c);
+          // animate upward and fade
+          const travel = 700 + Math.random()*300;
+          c.animate([
+            { transform: 'translateY(0px) scale(0.9)', opacity:1 },
+            { transform: `translateY(-${travel}px) scale(1.1)`, opacity:0 }
+          ], { duration: 2200 + Math.random()*1200, easing:'cubic-bezier(.2,.8,.2,1)'})
+          .onfinish = ()=> c.remove();
+        }, i * 80);
+      }
+    }
+
+    /* ========== Music control (user: set mp3 URL below) ========== */
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    // <-- PUT YOUR MP3 LINK HERE (must be a direct URL, CORS allowed) -->
+    bgMusic.src = 'C:\Users\ashis\OneDrive\Desktop\sunbeam\PreCAT\c program\CProgramming\Raatein Na Ab Meri Na Mera Sav-Downringtone.com.mp3'; // e.g. 'https://example.com/song.mp3'
+
+    function tryPlayMusic(){
+      if(!bgMusic.src) return;
+      bgMusic.play().catch(()=>{ /* autoplay blocked — user gesture required */ });
+      musicBtn.textContent = '⏸ Pause Music';
+    }
+
+    musicBtn.addEventListener('click', ()=> {
+      if(!bgMusic.src){ alert('No music set. Open the HTML file and set a direct MP3 URL in the script (bgMusic.src).'); return; }
+      if(bgMusic.paused) { bgMusic.play(); musicBtn.textContent = '⏸ Pause Music'; }
+      else { bgMusic.pause(); musicBtn.textContent = '🎵 Play Music'; }
+    });
+
+    /* ========== Accessibility: close modal on ESC ========== */
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') modal.style.display = 'none';
+    });
+
+    /* ========== small flourish: initial pre-spawns to set atmosphere ========== */
+    for(let i=0;i<6;i++) setTimeout(()=> spawnEmoji(), i*300);
+
+    /* ========== optional: make avatar letter dynamic from name ========== */
+    const avatar = document.getElementById('avatar');
+    if(girlfriendName && girlfriendName.length>0) avatar.textContent = girlfriendName[0].toUpperCase();
+
+    /* ========== cleanup when leaving page (stop intervals) ========== */
+    window.addEventListener('beforeunload', ()=> {
+      clearInterval(emojiInterval);
+    });
+  </script>
+</body>
+</html>
